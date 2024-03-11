@@ -4,29 +4,34 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour
 {
-    public Transform[] images;
+    [SerializeField] private Symbol[] symbols;
 
-    public RectTransform parent;
+    [SerializeField] private int imagesOnScreen = 3;
 
-    public int imagesOnScreen = 3;
-    public float spaceBetweenImages;
-    public float imageHeight;
+    [SerializeField] private float currentMoveSpeed = 0;
+    [SerializeField] private float maxMoveSpeed;
+    [SerializeField] private float speedIncrementTime;
 
-    public float moveSpeed;
+    private float spaceBetweenImages;
+    private float imageHeight;
+    private float maxThreshold;
+    private bool canMove;
 
-    public float maxThreshold;
-
-
-    private void Start()
+    private SlotMachineController slotMachineController;
+   
+    public void InitSlot(SlotMachineController _slotMachineController)
     {
-        Init();
+        slotMachineController = _slotMachineController;
+
+        SetSymbols();
+        CalculateVaribles();
         SetImagesPosition();
     }
 
-    private void Init()
+    private void CalculateVaribles()
     {
-        float totalHeight = parent.rect.height;
-        imageHeight = images[0].GetComponent<RectTransform>().rect.height;
+        float totalHeight = gameObject.GetComponent<RectTransform>().rect.height;
+        imageHeight = symbols[0].GetComponent<RectTransform>().rect.height;
 
         float freeHeight = totalHeight - (imageHeight * imagesOnScreen);
 
@@ -35,44 +40,79 @@ public class Slot : MonoBehaviour
         maxThreshold = 2 * (imageHeight + spaceBetweenImages);
     }
 
+    private void SetSymbols()
+    {
+        int[] randomIndex = new int[symbols.Length];
+        for(int i = 0; i < symbols.Length; i++)
+        {
+            randomIndex[i] = i;
+        }
+        randomIndex.Shuffle();
+
+        for(int i = 0; i < symbols.Length; i++)
+        {
+            SymbolType type = (SymbolType)randomIndex[i];
+            Sprite sprite = slotMachineController.GetSymbol(type);
+            symbols[i].InitSymbol(sprite, type);
+        }
+    }
+
     private void SetImagesPosition()
     {
-        images[0].localPosition = new Vector3(0, -(imageHeight + spaceBetweenImages), 0);
-        images[1].localPosition = Vector3.zero;
+        symbols[0].ThisTransform.localPosition = new Vector3(0, -(imageHeight + spaceBetweenImages), 0);
+        symbols[1].ThisTransform.localPosition = Vector3.zero;
 
-        for (int i = 2; i < images.Length; i++)
+        for (int i = 2; i < symbols.Length; i++)
         {
-            images[i].localPosition = new Vector3(0, (imageHeight + spaceBetweenImages) * (i - 1), 0);
+            symbols[i].ThisTransform.localPosition = new Vector3(0, (imageHeight + spaceBetweenImages) * (i - 1), 0);
         }
     }
 
     private void MoveImages()
     {
-        for (int i = 0; i < images.Length; i++)
+        for (int i = 0; i < symbols.Length; i++)
         {
-            images[i].localPosition += moveSpeed * Time.deltaTime * Vector3.down;  
+            symbols[i].ThisTransform.localPosition += currentMoveSpeed * Time.deltaTime * Vector3.down;  
 
-            if(images[i].localPosition.y < -maxThreshold)
+            if(symbols[i].ThisTransform.localPosition.y < -maxThreshold)
             {
                 if(i == 0)
                 {
-                    images[i].localPosition = images[images.Length - 1].localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
+                    symbols[i].ThisTransform.localPosition = symbols[symbols.Length - 1].ThisTransform.localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
                 }
                 else
                 {
-                    images[i].localPosition = images[i - 1].localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
+                    symbols[i].ThisTransform.localPosition = symbols[i - 1].ThisTransform.localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
                 }
             }
         }
     }
 
-    private void StopImages()
+    public void Move()
     {
-
+        canMove = true;
+        StartCoroutine(SpeedIncrement());
     }
 
     private void Update()
     {
-        MoveImages();
+        if(canMove)
+        {
+            MoveImages();
+        }
+    }
+
+    private IEnumerator SpeedIncrement()
+    {
+        float elapcedTime = 0;
+
+        while(elapcedTime < speedIncrementTime)
+        {
+            elapcedTime += Time.deltaTime;
+            currentMoveSpeed = Mathf.Lerp(0, maxMoveSpeed, elapcedTime / speedIncrementTime);
+
+            yield return null;
+        }
+        currentMoveSpeed = maxMoveSpeed;
     }
 }
