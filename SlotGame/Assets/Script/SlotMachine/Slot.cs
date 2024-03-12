@@ -82,7 +82,7 @@ public class Slot : MonoBehaviour
         for(int i = 0; i < symbols.Length; i++)
         {
             SymbolType type = (SymbolType)randomIndex[i];
-            Sprite sprite = slotMachineController.GetSymbol(type);
+            Sprite sprite = slotMachineController.GetSymbolSprite(type);
             symbols[i].InitSymbol(sprite, type);
         }
     }

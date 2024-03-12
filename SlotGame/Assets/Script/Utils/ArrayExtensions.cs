@@ -16,4 +16,12 @@ public static class ArrayExtensions
             array[n] = value;
         }
     }
+
+    public static void Clear(this int[] array)
+    {
+        for(int i = 0; i < array.Length; i++)
+        {
+            array[i] = -1;
+        }
+    }
 }
