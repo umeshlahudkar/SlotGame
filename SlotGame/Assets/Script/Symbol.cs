@@ -5,15 +5,19 @@ using UnityEngine.UI;
 
 public class Symbol : MonoBehaviour
 {
-    private Image thisImg;
-    private RectTransform thisTransform;
+    [SerializeField] private Image thisImg;
+    [SerializeField] private RectTransform thisTransform;
+    [SerializeField] private GameObject frameImg;
+    [SerializeField] private GameObject EffectImg;
+    [SerializeField] private Animator animator;
 
     private SymbolType symbolType;
 
-    private void Awake()
+    private void OnEnable()
     {
-        thisImg = gameObject.GetComponent<Image>();
-        thisTransform = gameObject.GetComponent<RectTransform>();
+        animator.enabled = false;
+        frameImg.SetActive(false);
+        EffectImg.SetActive(false);
     }
 
     public void InitSymbol(Sprite sprite, SymbolType _symbolType)

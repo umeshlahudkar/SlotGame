@@ -55,6 +55,7 @@ public class SlotMachineController : MonoBehaviour
         yield return StartCoroutine(MoveSlots());
         yield return new WaitForSeconds(5f);
         yield return StartCoroutine(StopSlots());
+        CheckForWinningCombination();
     }
 
     private IEnumerator MoveSlots()
@@ -81,7 +82,9 @@ public class SlotMachineController : MonoBehaviour
 
     private void CheckForWinningCombination()
     {
-
+        Debug.Log(slots[0].GetSymbolAt(0));
+        Debug.Log(slots[0].GetSymbolAt(1));
+        Debug.Log(slots[0].GetSymbolAt(2));
     }
 
     public Sprite GetSymbol(SymbolType type)

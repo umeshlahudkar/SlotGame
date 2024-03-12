@@ -153,4 +153,40 @@ public class Slot : MonoBehaviour
         }
         currentMoveSpeed = maxMoveSpeed;
     }
+
+    public SymbolType GetSymbolAt(int row)
+    {
+        SymbolType symbolType = SymbolType.Symbol_1;
+
+        switch(row)
+        {
+            case 0:
+                symbolType = GetSymbolAtYPos(-(symbolHeight + spaceBetweenSymbols));
+                break;
+
+            case 1:
+                symbolType = GetSymbolAtYPos(0.0f);
+                break;
+
+            case 2:
+                symbolType = GetSymbolAtYPos((symbolHeight + spaceBetweenSymbols));
+                break;
+        }
+
+        return symbolType;
+    }
+
+    private SymbolType GetSymbolAtYPos(float yPos)
+    {
+        SymbolType symbolType = SymbolType.Symbol_1;
+        for (int i = 0; i < symbols.Length; i++)
+        {
+            if(symbols[i].ThisTransform.localPosition.y == yPos)
+            {
+                symbolType = symbols[i].SymbolType;
+                break;
+            }
+        }
+        return symbolType;
+    } 
 }
