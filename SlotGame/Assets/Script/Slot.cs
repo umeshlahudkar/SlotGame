@@ -6,14 +6,14 @@ public class Slot : MonoBehaviour
 {
     [SerializeField] private Symbol[] symbols;
 
-    [SerializeField] private int imagesOnScreen = 3;
+    [SerializeField] private int symbolCountOnScreen = 3;
 
     [SerializeField] private float currentMoveSpeed = 0;
     [SerializeField] private float maxMoveSpeed;
     [SerializeField] private float speedIncrementTime;
 
-    private float spaceBetweenImages;
-    private float imageHeight;
+    private float spaceBetweenSymbols;
+    private float symbolHeight;
     private float maxThreshold;
     private bool canMove;
     private bool isStoped;
@@ -26,19 +26,19 @@ public class Slot : MonoBehaviour
 
         SetSymbols();
         CalculateVaribles();
-        SetImagesPosition();
+        SetSymbolPosition();
     }
 
     private void CalculateVaribles()
     {
         float totalHeight = gameObject.GetComponent<RectTransform>().rect.height;
-        imageHeight = symbols[0].GetComponent<RectTransform>().rect.height;
+        symbolHeight = symbols[0].ThisTransform.rect.height;
 
-        float freeHeight = totalHeight - (imageHeight * imagesOnScreen);
+        float freeHeight = totalHeight - (symbolHeight * symbolCountOnScreen);
 
-        spaceBetweenImages = freeHeight / ((imagesOnScreen - 1) + 2);
+        spaceBetweenSymbols = freeHeight / ((symbolCountOnScreen - 1) + 2);
 
-        maxThreshold = 2 * (imageHeight + spaceBetweenImages);
+        maxThreshold = 2 * (symbolHeight + spaceBetweenSymbols);
     }
 
     private void SetSymbols()
@@ -58,21 +58,25 @@ public class Slot : MonoBehaviour
         }
     }
 
-    private void SetImagesPosition()
+    private void SetSymbolPosition(int topSymbolIndex = 0)
     {
-        symbols[0].ThisTransform.localPosition = new Vector3(0, -(imageHeight + spaceBetweenImages), 0);
-        symbols[1].ThisTransform.localPosition = Vector3.zero;
+        topSymbolIndex = (topSymbolIndex + 1) % symbols.Length;
+        symbols[topSymbolIndex].ThisTransform.localPosition = new Vector3(0, -(symbolHeight + spaceBetweenSymbols), 0);
+
+        topSymbolIndex = (topSymbolIndex + 1) % symbols.Length;
+        symbols[topSymbolIndex].ThisTransform.localPosition = Vector3.zero;
 
         for (int i = 2; i < symbols.Length; i++)
         {
-            symbols[i].ThisTransform.localPosition = new Vector3(0, (imageHeight + spaceBetweenImages) * (i - 1), 0);
+            topSymbolIndex = (topSymbolIndex + 1) % symbols.Length;
+            symbols[topSymbolIndex].ThisTransform.localPosition = new Vector3(0, (symbolHeight + spaceBetweenSymbols) * (i - 1), 0);
         }
     }
 
     private void MoveImages()
     {
         bool flag = false;
-        int index = -1;
+        int topSymbolIndex = -1;
         for (int i = 0; i < symbols.Length; i++)
         {
             symbols[i].ThisTransform.localPosition += currentMoveSpeed * Time.deltaTime * Vector3.down;
@@ -81,38 +85,21 @@ public class Slot : MonoBehaviour
             {
                 if (i == 0)
                 {
-                    symbols[i].ThisTransform.localPosition = symbols[symbols.Length - 1].ThisTransform.localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
+                    symbols[i].ThisTransform.localPosition = symbols[symbols.Length - 1].ThisTransform.localPosition + new Vector3(0, symbolHeight + spaceBetweenSymbols, 0);
                 }
                 else
                 {
-                    symbols[i].ThisTransform.localPosition = symbols[i - 1].ThisTransform.localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
+                    symbols[i].ThisTransform.localPosition = symbols[i - 1].ThisTransform.localPosition + new Vector3(0, symbolHeight + spaceBetweenSymbols, 0);
                 }
                 flag = true;
-                index = i;
+                topSymbolIndex = i;
             }
         }
 
         if(isStoped && flag)
         {
             canMove = false;
-            AllignSymbols(index);
-        }
-    }
-
-    private void AllignSymbols(int index)
-    {
-        index = (index + 1) % symbols.Length;
-
-        symbols[index].ThisTransform.localPosition = new Vector3(0, -(imageHeight + spaceBetweenImages), 0);
-
-        index = (index + 1) % symbols.Length;
-
-        symbols[index].ThisTransform.localPosition = Vector3.zero;
-
-        for (int i = 2; i < symbols.Length; i++)
-        {
-            index = (index + 1) % symbols.Length;
-            symbols[index].ThisTransform.localPosition = new Vector3(0, (imageHeight + spaceBetweenImages) * (i - 1), 0);
+            SetSymbolPosition(topSymbolIndex);
         }
     }
 
