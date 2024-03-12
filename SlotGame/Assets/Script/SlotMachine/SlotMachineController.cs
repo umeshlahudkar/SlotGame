@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SlotMachineController : MonoBehaviour
+public class SlotMachineController : Singleton<SlotMachineController>
 {
     [SerializeField] private Slot[] slots;
     [SerializeField] private Sprite[] symbolSprites;
@@ -52,10 +52,21 @@ public class SlotMachineController : MonoBehaviour
     private IEnumerator SpinMachineCo()
     {
         ResetMachine();
+
         yield return StartCoroutine(MoveSlots());
         yield return new WaitForSeconds(5f);
         yield return StartCoroutine(StopSlots());
-        CheckForWinningCombination();
+
+        if(CheckForWinningCombination())
+        {
+            yield return new WaitForSeconds(2f);
+            UIController.Instance.OpenWinScreen();
+        }
+        else
+        {
+            UIController.Instance.ToggleStartButton(true);
+        }
+
     }
 
     private IEnumerator MoveSlots()
@@ -80,11 +91,13 @@ public class SlotMachineController : MonoBehaviour
         }
     }
 
-    private void CheckForWinningCombination()
+    private bool CheckForWinningCombination()
     {
-        Debug.Log(slots[0].GetSymbolAt(0));
-        Debug.Log(slots[0].GetSymbolAt(1));
-        Debug.Log(slots[0].GetSymbolAt(2));
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].PlaySymbolWinAnimationInRow(2);
+        }
+        return true;
     }
 
     public Sprite GetSymbol(SymbolType type)

@@ -38,6 +38,7 @@ public class Slot : MonoBehaviour
         canMove = false;
         isStoped = true;
 
+        ReseTSymbols();
         SetSymbolPosition();
         SetSymbols();
     }
@@ -46,7 +47,7 @@ public class Slot : MonoBehaviour
     {
         if (canMove)
         {
-            MoveImages();
+            MoveSymbols();
         }
     }
 
@@ -59,6 +60,14 @@ public class Slot : MonoBehaviour
 
         spaceBetweenSymbols = freeSpace / ((symbolCountOnScreen - 1) + 2);
         downMoveMaxThreshold = 2 * (symbolHeight + spaceBetweenSymbols);
+    }
+
+    private void ReseTSymbols()
+    {
+        for (int i = 0; i < symbols.Length; i++)
+        {
+            symbols[i].ResetSymbol();
+        }
     }
 
     private void SetSymbols()
@@ -93,7 +102,7 @@ public class Slot : MonoBehaviour
         }
     }
 
-    private void MoveImages()
+    private void MoveSymbols()
     {
         bool flag = false;
         int topSymbolIndex = -1;
@@ -154,39 +163,56 @@ public class Slot : MonoBehaviour
         currentMoveSpeed = maxMoveSpeed;
     }
 
-    public SymbolType GetSymbolAt(int row)
+    private Symbol GetSymbolPresentInRow(int row)
     {
-        SymbolType symbolType = SymbolType.Symbol_1;
+        Symbol symbol = null;
 
-        switch(row)
+        switch (row)
         {
             case 0:
-                symbolType = GetSymbolAtYPos(-(symbolHeight + spaceBetweenSymbols));
+                symbol = GetSymbolPresentAtYPos(-(symbolHeight + spaceBetweenSymbols));
                 break;
 
             case 1:
-                symbolType = GetSymbolAtYPos(0.0f);
+                symbol = GetSymbolPresentAtYPos(0.0f);
                 break;
 
             case 2:
-                symbolType = GetSymbolAtYPos((symbolHeight + spaceBetweenSymbols));
+                symbol = GetSymbolPresentAtYPos((symbolHeight + spaceBetweenSymbols));
                 break;
         }
 
-        return symbolType;
+        return symbol;
     }
 
-    private SymbolType GetSymbolAtYPos(float yPos)
+    public SymbolType GetSymbolTypeInRow(int row)
     {
-        SymbolType symbolType = SymbolType.Symbol_1;
+        Symbol symbol = GetSymbolPresentInRow(row);
+        if (symbol != null)
+        {
+            return symbol.SymbolType;
+        }
+
+        return SymbolType.Symbol_1;
+    }
+
+    private Symbol GetSymbolPresentAtYPos(float yPos)
+    {
+        Symbol symbol = null;
         for (int i = 0; i < symbols.Length; i++)
         {
-            if(symbols[i].ThisTransform.localPosition.y == yPos)
+            if (symbols[i].ThisTransform.localPosition.y == yPos)
             {
-                symbolType = symbols[i].SymbolType;
+                symbol = symbols[i];
                 break;
             }
         }
-        return symbolType;
-    } 
+        return symbol;
+    }
+
+    public void PlaySymbolWinAnimationInRow(int row)
+    {
+        Symbol symbol = GetSymbolPresentInRow(row);
+        symbol.PlayWinAnimation();
+    }
 }
