@@ -3,23 +3,26 @@ using UnityEngine;
 
 public class WinScreen : MonoBehaviour
 {
+    [Header("Ray")]
     [SerializeField] private Transform ray;
     [SerializeField] private float rayRotationSpeed;
 
+    [Header("Star")]
     [SerializeField] private Transform star;
     [SerializeField] private float starScalingTime;
 
     private float rayCurrentAngle;
+    private Coroutine starCoroutinue;
 
     private void OnEnable()
     {
         rayCurrentAngle = 0;
         star.localScale = Vector3.zero;
-    }
-
-    private void Start()
-    {
-        StartCoroutine(StarScalingAnim());
+        if(starCoroutinue != null)
+        {
+            StopCoroutine(starCoroutinue);
+        }
+        starCoroutinue = StartCoroutine(StarScalingAnim());
     }
 
     private void Update()
