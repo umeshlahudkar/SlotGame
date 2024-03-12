@@ -36,6 +36,27 @@ public class SlotMachineController : MonoBehaviour
         }
     }
 
+    private void ResetMachine()
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].ResetSlot();
+        }
+    }
+
+    public void SpinSlotMachine()
+    {
+        StartCoroutine(SpinMachineCo());
+    }
+
+    private IEnumerator SpinMachineCo()
+    {
+        ResetMachine();
+        yield return StartCoroutine(MoveSlots());
+        yield return new WaitForSeconds(5f);
+        yield return StartCoroutine(StopSlots());
+    }
+
     private IEnumerator MoveSlots()
     {
         if(slotMoveWaitForSeconds == null) { slotMoveWaitForSeconds = new WaitForSeconds(slotMovementDalay); }
@@ -56,6 +77,11 @@ public class SlotMachineController : MonoBehaviour
             slots[i].Stop();
             yield return slotMoveWaitForSeconds;
         }
+    }
+
+    private void CheckForWinningCombination()
+    {
+
     }
 
     public Sprite GetSymbol(SymbolType type)

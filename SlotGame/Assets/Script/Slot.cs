@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour
 {
+    // Symbols - Holds the image icon
     [SerializeField] private Symbol[] symbols;
+
 
     [SerializeField] private int symbolCountOnScreen = 3;
 
@@ -14,31 +16,49 @@ public class Slot : MonoBehaviour
 
     private float spaceBetweenSymbols;
     private float symbolHeight;
-    private float maxThreshold;
+    private float downMoveMaxThreshold;
     private bool canMove;
     private bool isStoped;
 
     private SlotMachineController slotMachineController;
+    private Coroutine speedIncrementCoroutinue;
    
     public void InitSlot(SlotMachineController _slotMachineController)
     {
         slotMachineController = _slotMachineController;
 
         SetSymbols();
-        CalculateVaribles();
+        CalculateSpaceAndMoveThreshold();
         SetSymbolPosition();
     }
 
-    private void CalculateVaribles()
+    public void ResetSlot()
+    {
+        currentMoveSpeed = 0;
+        canMove = false;
+        isStoped = true;
+
+        SetSymbolPosition();
+        SetSymbols();
+    }
+
+    private void LateUpdate()
+    {
+        if (canMove)
+        {
+            MoveImages();
+        }
+    }
+
+    private void CalculateSpaceAndMoveThreshold()
     {
         float totalHeight = gameObject.GetComponent<RectTransform>().rect.height;
         symbolHeight = symbols[0].ThisTransform.rect.height;
 
-        float freeHeight = totalHeight - (symbolHeight * symbolCountOnScreen);
+        float freeSpace = totalHeight - (symbolHeight * symbolCountOnScreen);
 
-        spaceBetweenSymbols = freeHeight / ((symbolCountOnScreen - 1) + 2);
-
-        maxThreshold = 2 * (symbolHeight + spaceBetweenSymbols);
+        spaceBetweenSymbols = freeSpace / ((symbolCountOnScreen - 1) + 2);
+        downMoveMaxThreshold = 2 * (symbolHeight + spaceBetweenSymbols);
     }
 
     private void SetSymbols()
@@ -81,7 +101,7 @@ public class Slot : MonoBehaviour
         {
             symbols[i].ThisTransform.localPosition += currentMoveSpeed * Time.deltaTime * Vector3.down;
 
-            if (symbols[i].ThisTransform.localPosition.y < -maxThreshold)
+            if (symbols[i].ThisTransform.localPosition.y < -downMoveMaxThreshold)
             {
                 if (i == 0)
                 {
@@ -107,20 +127,17 @@ public class Slot : MonoBehaviour
     {
         canMove = true;
         isStoped = false;
-        StartCoroutine(SpeedIncrement());
+
+        if(speedIncrementCoroutinue != null)
+        {
+            StopCoroutine(speedIncrementCoroutinue);
+        }
+        speedIncrementCoroutinue = StartCoroutine(SpeedIncrement());
     }
 
     public void Stop()
     {
         isStoped = true;
-    }
-
-    private void LateUpdate()
-    {
-        if(canMove)
-        {
-            MoveImages();
-        }
     }
 
     private IEnumerator SpeedIncrement()
