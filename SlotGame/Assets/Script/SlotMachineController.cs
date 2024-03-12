@@ -22,6 +22,10 @@ public class SlotMachineController : MonoBehaviour
         {
             StartCoroutine(MoveSlots());
         }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            StartCoroutine(StopSlots());
+        }
     }
 
     private void InitMachine()
@@ -39,6 +43,17 @@ public class SlotMachineController : MonoBehaviour
         for (int i = 0; i < slots.Length; i++)
         {
             slots[i].Move();
+            yield return slotMoveWaitForSeconds;
+        }
+    }
+
+    private IEnumerator StopSlots()
+    {
+        if (slotMoveWaitForSeconds == null) { slotMoveWaitForSeconds = new WaitForSeconds(slotMovementDalay); }
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].Stop();
             yield return slotMoveWaitForSeconds;
         }
     }

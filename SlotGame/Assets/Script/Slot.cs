@@ -16,6 +16,7 @@ public class Slot : MonoBehaviour
     private float imageHeight;
     private float maxThreshold;
     private bool canMove;
+    private bool isStoped;
 
     private SlotMachineController slotMachineController;
    
@@ -70,13 +71,15 @@ public class Slot : MonoBehaviour
 
     private void MoveImages()
     {
+        bool flag = false;
+        int index = -1;
         for (int i = 0; i < symbols.Length; i++)
         {
-            symbols[i].ThisTransform.localPosition += currentMoveSpeed * Time.deltaTime * Vector3.down;  
+            symbols[i].ThisTransform.localPosition += currentMoveSpeed * Time.deltaTime * Vector3.down;
 
-            if(symbols[i].ThisTransform.localPosition.y < -maxThreshold)
+            if (symbols[i].ThisTransform.localPosition.y < -maxThreshold)
             {
-                if(i == 0)
+                if (i == 0)
                 {
                     symbols[i].ThisTransform.localPosition = symbols[symbols.Length - 1].ThisTransform.localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
                 }
@@ -84,17 +87,48 @@ public class Slot : MonoBehaviour
                 {
                     symbols[i].ThisTransform.localPosition = symbols[i - 1].ThisTransform.localPosition + new Vector3(0, imageHeight + spaceBetweenImages, 0);
                 }
+                flag = true;
+                index = i;
             }
+        }
+
+        if(isStoped && flag)
+        {
+            canMove = false;
+            AllignSymbols(index);
+        }
+    }
+
+    private void AllignSymbols(int index)
+    {
+        index = (index + 1) % symbols.Length;
+
+        symbols[index].ThisTransform.localPosition = new Vector3(0, -(imageHeight + spaceBetweenImages), 0);
+
+        index = (index + 1) % symbols.Length;
+
+        symbols[index].ThisTransform.localPosition = Vector3.zero;
+
+        for (int i = 2; i < symbols.Length; i++)
+        {
+            index = (index + 1) % symbols.Length;
+            symbols[index].ThisTransform.localPosition = new Vector3(0, (imageHeight + spaceBetweenImages) * (i - 1), 0);
         }
     }
 
     public void Move()
     {
         canMove = true;
+        isStoped = false;
         StartCoroutine(SpeedIncrement());
     }
 
-    private void Update()
+    public void Stop()
+    {
+        isStoped = true;
+    }
+
+    private void LateUpdate()
     {
         if(canMove)
         {
