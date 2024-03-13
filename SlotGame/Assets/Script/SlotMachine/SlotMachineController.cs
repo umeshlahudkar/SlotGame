@@ -17,13 +17,13 @@ namespace SlotGame.SlotMachine
         [SerializeField] private Sprite[] symbolSprites;
 
         // delay between each slot for spinnig, and stopping
-        [SerializeField] private float slotSpinningDalay;
+        private float slotSpinningDalay = 0.15f;
 
         // delay between slots spin start and stop
         [SerializeField] private float delayBetweenSpinStartStop;
 
         // delay between slots win animation and win screen openning 
-        [SerializeField] private float delayBetweenSlotsWinAnimWinScreen;
+        private float delayBetweenSlotsWinAnimWinScreen = 1.5f;
 
         // stores the win combination position, array index is the Slot position, and each element represents row position at each slot
         private int[] winCombinationPos = new int[] { -1, -1, -1, -1, -1 };
