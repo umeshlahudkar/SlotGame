@@ -880,6 +880,85 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &180031537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 180031538}
+  - component: {fileID: 180031540}
+  - component: {fileID: 180031539}
+  m_Layer: 5
+  m_Name: Text (Legacy)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &180031538
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180031537}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 339328357}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 6.4066, y: 24.203}
+  m_SizeDelta: {x: 172.8133, y: 78.4059}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &180031539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180031537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 50
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 3
+    m_MaxSize: 50
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: TEST
+--- !u!222 &180031540
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180031537}
+  m_CullTransparentMesh: 1
 --- !u!1001 &303470953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1006,7 +1085,7 @@ GameObject:
   - component: {fileID: 339328359}
   - component: {fileID: 339328358}
   m_Layer: 5
-  m_Name: AutoSpinButton
+  m_Name: TestButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1023,7 +1102,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 180031538}
   m_Father: {fileID: 738880724}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1070,11 +1150,23 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 339328359}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 738880725}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: OnTestButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &339328359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1095,7 +1187,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ab2714d6e967a9043b2a0ed0b846620b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c6344b47107500648af506f32e106801, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1306,10 +1398,8 @@ MonoBehaviour:
   - {fileID: 429874634}
   - {fileID: 1743836983}
   - {fileID: 384688694}
-  symbolCountOnScreen: 3
-  currentMoveSpeed: 0
-  maxMoveSpeed: 5000
-  speedIncrementTime: 2
+  maxSpinSpeed: 5000
+  spinSpeedIncremetTime: 2
 --- !u!1001 &376591498
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1616,10 +1706,8 @@ MonoBehaviour:
   - {fileID: 2125495719}
   - {fileID: 2106127217}
   - {fileID: 814045818}
-  symbolCountOnScreen: 3
-  currentMoveSpeed: 0
-  maxMoveSpeed: 5000
-  speedIncrementTime: 2
+  maxSpinSpeed: 5000
+  spinSpeedIncremetTime: 2
 --- !u!1001 &429874632
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2637,7 +2725,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 218e710dfdc13d14c8f27805682c1df9, type: 3}
   - {fileID: 21300000, guid: f03becc3df6a9a24ab418bb56b45ae29, type: 3}
   - {fileID: 21300000, guid: 3d992524bb8f0494a9a5bdbf053fd91e, type: 3}
-  slotMovementDalay: 0.15
+  slotSpinningDalay: 0.15
+  delayBetweenSpinStartStop: 5
+  delayBetweenSlotsWinAnimWinScreen: 1.5
 --- !u!1 &738880720
 GameObject:
   m_ObjectHideFlags: 0
@@ -2757,6 +2847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startButton: {fileID: 1372155802}
+  testButton: {fileID: 339328358}
   winScreen: {fileID: 40751805}
 --- !u!1 &809975350
 GameObject:
@@ -3139,10 +3230,8 @@ MonoBehaviour:
   - {fileID: 1656164331}
   - {fileID: 1801630815}
   - {fileID: 303470955}
-  symbolCountOnScreen: 3
-  currentMoveSpeed: 0
-  maxMoveSpeed: 5000
-  speedIncrementTime: 2
+  maxSpinSpeed: 5000
+  spinSpeedIncremetTime: 2
 --- !u!1001 &866847207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3659,10 +3748,8 @@ MonoBehaviour:
   - {fileID: 1733896519}
   - {fileID: 638140491}
   - {fileID: 441997768}
-  symbolCountOnScreen: 3
-  currentMoveSpeed: 0
-  maxMoveSpeed: 5000
-  speedIncrementTime: 2
+  maxSpinSpeed: 5000
+  spinSpeedIncremetTime: 2
 --- !u!1 &1065482041
 GameObject:
   m_ObjectHideFlags: 0
@@ -6217,10 +6304,8 @@ MonoBehaviour:
   - {fileID: 376591500}
   - {fileID: 110151736}
   - {fileID: 1246149138}
-  symbolCountOnScreen: 3
-  currentMoveSpeed: 0
-  maxMoveSpeed: 5000
-  speedIncrementTime: 2
+  maxSpinSpeed: 5000
+  spinSpeedIncremetTime: 2
 --- !u!1001 &2106127215
 PrefabInstance:
   m_ObjectHideFlags: 0

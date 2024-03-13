@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Symbol - is a single icon which seen on the display 
+/// Handles the sprite Update and Win Animation of Symbol triggering
+/// </summary>
 public class Symbol : MonoBehaviour
 {
     [SerializeField] private Image thisImg;
@@ -16,6 +20,9 @@ public class Symbol : MonoBehaviour
         ResetSymbol();
     }
 
+    /// <summary>
+    /// Disables animation component
+    /// </summary>
     public void ResetSymbol()
     {
         ToggleWinAnimation(false);
@@ -54,6 +61,7 @@ public class Symbol : MonoBehaviour
 
     /// <summary>
     /// Gets called when win animation completes
+    /// Referenced in Win Animation event
     /// </summary>
     private void OnWinAnimationComplete()
     {

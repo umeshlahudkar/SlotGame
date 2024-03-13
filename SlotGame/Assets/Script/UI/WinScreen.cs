@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Handles Win screen animation and clocing screen
+/// </summary>
 public class WinScreen : MonoBehaviour
 {
     [Header("Ray")]
@@ -30,6 +33,9 @@ public class WinScreen : MonoBehaviour
         RotateRays();
     }
 
+    /// <summary>
+    /// Rotats Ray gameobject
+    /// </summary>
     private void RotateRays()
     {
         rayCurrentAngle += Time.deltaTime * rayRotationSpeed;
@@ -37,6 +43,10 @@ public class WinScreen : MonoBehaviour
         ray.localEulerAngles = Vector3.forward * rayCurrentAngle;
     }
 
+    /// <summary>
+    /// Increases star gameobject scale from 0 to 1
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator StarScalingAnim()
     {
         float elapcedTime = 0;
@@ -51,6 +61,10 @@ public class WinScreen : MonoBehaviour
         star.localScale = Vector3.one;
     }
 
+
+    /// <summary>
+    /// Gets called when user click on Win screen
+    /// </summary>
     public void OnScreenClick()
     {
         gameObject.SetActive(false);

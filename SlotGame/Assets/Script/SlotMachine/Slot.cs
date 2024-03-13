@@ -1,41 +1,70 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represent single coloum on the display
+/// Handles Slot movement, Slot stopping, Resetting Symbols
+/// </summary>
 public class Slot : MonoBehaviour
 {
     // Symbols - Holds the image icon
     [SerializeField] private Symbol[] symbols;
 
+    // Symbols count which will be shown on display
+    private int symbolCountOnScreen = 3;
 
-    [SerializeField] private int symbolCountOnScreen = 3;
+    // spinning speed of this slot
+    private float currentSpinSpeed = 0;
 
-    [SerializeField] private float currentMoveSpeed = 0;
-    [SerializeField] private float maxMoveSpeed;
-    [SerializeField] private float speedIncrementTime;
+    // max spin speed of the this slot
+    [SerializeField] private float maxSpinSpeed;
 
+    // time to increase the spin speed to max speed
+    [SerializeField] private float spinSpeedIncremetTime;
+
+    // vertical space between two symbols(icon)
     private float spaceBetweenSymbols;
+
+    // height of symbol(icon)
     private float symbolHeight;
+
+    /// <summary>
+    /// max down position of symbol, once symbol reached to threshold it will move to upward to get spin effect in circular 
+    /// </summary>
     private float downMoveMaxThreshold;
-    private bool canMove;
+
+    // used to start the slot spinning
+    private bool canSpin;
+
+    // used to stop the slot spinning
     private bool isStoped;
 
+    // reference of SlotMachineController
     private SlotMachineController slotMachineController;
+
+    // holds the reference of speed Increament coroutinue, to stop the coroutinue before starting new one
     private Coroutine speedIncrementCoroutinue;
    
+
+    /// <summary>
+    /// Initializes the slot
+    /// </summary>
+    /// <param name="_slotMachineController"></param>
     public void InitSlot(SlotMachineController _slotMachineController)
     {
         slotMachineController = _slotMachineController;
 
-        SetSymbols();
         CalculateSpaceAndMoveThreshold();
         SetSymbolPosition();
     }
 
+    /// <summary>
+    /// Reset slot to initial state
+    /// </summary>
     public void ResetSlot()
     {
-        currentMoveSpeed = 0;
-        canMove = false;
+        currentSpinSpeed = 0;
+        canSpin = false;
         isStoped = true;
 
         ReseTSymbols();
@@ -45,12 +74,15 @@ public class Slot : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (canMove)
+        if (canSpin)
         {
-            MoveSymbols();
+            SpinSymbols();
         }
     }
 
+    /// <summary>
+    /// Calculates the space between two Symbols(icons) and lower threshold value 
+    /// </summary>
     private void CalculateSpaceAndMoveThreshold()
     {
         float totalHeight = gameObject.GetComponent<RectTransform>().rect.height;
@@ -62,6 +94,9 @@ public class Slot : MonoBehaviour
         downMoveMaxThreshold = 2 * (symbolHeight + spaceBetweenSymbols);
     }
 
+    /// <summary>
+    /// Resets each symbols present in this slot
+    /// </summary>
     private void ReseTSymbols()
     {
         for (int i = 0; i < symbols.Length; i++)
@@ -70,8 +105,12 @@ public class Slot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Init each symbol by respected symbol sprite and Symbol type
+    /// </summary>
     private void SetSymbols()
     {
+        // randomIndex - store the value from 0 to symbolLength
         int[] randomIndex = new int[symbols.Length];
         for(int i = 0; i < symbols.Length; i++)
         {
@@ -87,6 +126,10 @@ public class Slot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the position of each symbols 
+    /// </summary>
+    /// <param name="topSymbolIndex"> symbol present on the top, it's index  </param>
     private void SetSymbolPosition(int topSymbolIndex = 0)
     {
         topSymbolIndex = (topSymbolIndex + 1) % symbols.Length;
@@ -102,13 +145,17 @@ public class Slot : MonoBehaviour
         }
     }
 
-    private void MoveSymbols()
+    /// <summary>
+    /// Spins the Slots, moves each symbol in the down direction and once it's reached to threshold, shift to the top
+    /// </summary>
+    private void SpinSymbols()
     {
-        bool flag = false;
+        bool movedToTopPos = false;
         int topSymbolIndex = -1;
+
         for (int i = 0; i < symbols.Length; i++)
         {
-            symbols[i].ThisTransform.localPosition += currentMoveSpeed * Time.deltaTime * Vector3.down;
+            symbols[i].ThisTransform.localPosition += currentSpinSpeed * Time.deltaTime * Vector3.down;
 
             if (symbols[i].ThisTransform.localPosition.y < -downMoveMaxThreshold)
             {
@@ -120,21 +167,25 @@ public class Slot : MonoBehaviour
                 {
                     symbols[i].ThisTransform.localPosition = symbols[i - 1].ThisTransform.localPosition + new Vector3(0, symbolHeight + spaceBetweenSymbols, 0);
                 }
-                flag = true;
+
+                movedToTopPos = true;
                 topSymbolIndex = i;
             }
         }
 
-        if(isStoped && flag)
+        if(isStoped && movedToTopPos)
         {
-            canMove = false;
+            canSpin = false;
             SetSymbolPosition(topSymbolIndex);
         }
     }
 
-    public void Move()
+    /// <summary>
+    /// Start the Slot Spin
+    /// </summary>
+    public void Spin()
     {
-        canMove = true;
+        canSpin = true;
         isStoped = false;
 
         if(speedIncrementCoroutinue != null)
@@ -144,25 +195,35 @@ public class Slot : MonoBehaviour
         speedIncrementCoroutinue = StartCoroutine(SpeedIncrement());
     }
 
+    /// <summary>
+    /// stops slot
+    /// </summary>
     public void Stop()
     {
         isStoped = true;
     }
 
+    /// <summary>
+    /// increases the Spin speed to max spin speed in the spacidied time
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator SpeedIncrement()
     {
         float elapcedTime = 0;
 
-        while(elapcedTime < speedIncrementTime)
+        while(elapcedTime < spinSpeedIncremetTime)
         {
             elapcedTime += Time.deltaTime;
-            currentMoveSpeed = Mathf.Lerp(0, maxMoveSpeed, elapcedTime / speedIncrementTime);
+            currentSpinSpeed = Mathf.Lerp(0, maxSpinSpeed, elapcedTime / spinSpeedIncremetTime);
 
             yield return null;
         }
-        currentMoveSpeed = maxMoveSpeed;
+        currentSpinSpeed = maxSpinSpeed;
     }
 
+    /// <summary>
+    /// returns the symbol present in the specific row
+    /// </summary>
     private Symbol GetSymbolPresentInRow(int row)
     {
         Symbol symbol = null;
@@ -185,6 +246,9 @@ public class Slot : MonoBehaviour
         return symbol;
     }
 
+    /// <summary>
+    ///  returns the symbol types of Symbols present in the specific row
+    /// </summary>
     public SymbolType GetSymbolTypeInRow(int row)
     {
         Symbol symbol = GetSymbolPresentInRow(row);
@@ -196,6 +260,9 @@ public class Slot : MonoBehaviour
         return SymbolType.Symbol_1;
     }
 
+    /// <summary>
+    /// finds and return the Symbol present at y Position
+    /// </summary>
     private Symbol GetSymbolPresentAtYPos(float yPos)
     {
         Symbol symbol = null;
@@ -210,6 +277,9 @@ public class Slot : MonoBehaviour
         return symbol;
     }
 
+    /// <summary>
+    /// Plays the Win ANimation
+    /// </summary>
     public void PlaySymbolWinAnimationInRow(int row)
     {
         Symbol symbol = GetSymbolPresentInRow(row);
